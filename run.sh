@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #   This script runs a single simulation of a TMD nanoribbon and copies the results into the
-#   directory containing the simulation data and the job name.
+#   directory containing the simulation data.
 
 #   ARGUMENTS
 #   TMD : Transition metal dichalcogenide
