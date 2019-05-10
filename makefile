@@ -48,11 +48,21 @@ green_afresh_freq=4
 verbose=1
 # Choose source file
 source=simulation_eq_time
+# Linux vs Mac
+sys=0
 
 # Set parameters of the simulation here.
-CXX = g++-8 -DNX=$(nx) -DNY=$(ny) -DNORB=$(norb) -DDT_INV=$(dt_inv)\
- -DBETA=$(beta) -DGREEN_AFRESH_FREQ=$(green_afresh_freq) -DVERBOSE=$(verbose)\
- -DEIGEN_DONT_PARALLELIZE -DNTHREADS=$(nthreads) -fopenmp
+ifeq ($(sys),0)
+ CXX=g++-8 -DNX=$(nx) -DNY=$(ny) -DNORB=$(norb) -DDT_INV=$(dt_inv)\
+  -DBETA=$(beta) -DGREEN_AFRESH_FREQ=$(green_afresh_freq) -DVERBOSE=$(verbose)\
+  -DEIGEN_DONT_PARALLELIZE -DNTHREADS=$(nthreads) -fopenmp
+endif
+ifeq ($(sys),1)
+ CXX=g++ -DNX=$(nx) -DNY=$(ny) -DNORB=$(norb) -DDT_INV=$(dt_inv)\
+  -DBETA=$(beta) -DGREEN_AFRESH_FREQ=$(green_afresh_freq) -DVERBOSE=$(verbose)\
+  -DEIGEN_DONT_PARALLELIZE -DNTHREADS=$(nthreads) -fopenmp
+endif
+
 
 include_dir=./includes
 
