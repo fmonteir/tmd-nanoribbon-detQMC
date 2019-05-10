@@ -40,13 +40,17 @@ The arguments of *simulation* are described below.
 To maximize the efficiency of the code, some simulation parameters must be known at compile time. To set them, you must provide arguments when running _make_. If you simply run _make_, you will obtain the default parameters that give the aforementioned results.
 
 
-To change the number of sites, inverse Trotter error, inverse temperature, the frequency of recomputing the Green's functions, the used source file, as well whether informations on the run are printed as the code runs, type:
+To change the number of threads, number of sites, inverse Trotter error,
+inverse temperature, the frequency of recomputing the Green's functions,
+the used source file, as well whether informations on the run are
+printed as the code runs, type:
 
 
 make clean
 
 
 make nsites=\<Number of sites\> dt_inv=\<Inverse Trotter Error\>beta=\<Inverse Temperature\> green_afresh_freq=\<Frequency of Recomputing G\> verbose=\<0 - no or 1 - yes> source=<source_file>
+nthreads=<Number of threads>
 
 
 To run another simulation, simply type ./simulation followed by its arguments:

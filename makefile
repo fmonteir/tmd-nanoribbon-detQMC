@@ -66,7 +66,7 @@ ifeq ($(verbose),1)
 	@echo ""
 	@echo "			Created by Francisco Brito (6 May 2019)"
 	@echo ""
-	@echo "The code has compiled successfully. To change the system's dimensions,\
+	@echo "The code has compiled successfully. To change the number of threads, the system's dimensions,\
 	inverse Trotter error, inverse temperature, the frequency of recomputing \
 	the Green's functions, whether or not information about the run is output,\
 	or the compiled source file type:"
@@ -77,7 +77,7 @@ ifeq ($(verbose),1)
 	dt_inv=<Inverse Trotter Error> beta=<Inverse Temperature> \
 	green_afresh_freq=<Frequency of Recomputing G>\
 	verbose=<0:silent, 1: outputs information about the run>\
-	source=<Source File>"
+	source=<Source File> nthreads=<Number of threads>"
 	@echo ""
 	@echo "To run a simulation, type ./simulation followed by its arguments:"
 	@echo ""
