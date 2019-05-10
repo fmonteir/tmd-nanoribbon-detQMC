@@ -13,6 +13,11 @@
 //  Wenbin Chen, Richard Scalettar, and Ichitaro Yamazaki (2009)
 //
 
+//  Number of threads
+#ifndef NTHREADS
+#define NTHREADS 4
+#endif
+
 //  Total number of "sites" (actual spatial sites plus orbitals)
 #ifndef NX
 #define NX 10
@@ -95,7 +100,7 @@ int main(int argc, char **argv)
     double * av_weights = new double[W * L];
     double av_sign = 0;
 
-    #pragma omp parallel num_threads(4)
+    #pragma omp parallel num_threads(NTHREADS)
     {
         //  RANDOM NUMBER GENERATION AND MONTE CARLO-RELATED VARIABLES.
         std::mt19937 gen;  //  mt19937 algorithm to generate random numbers
@@ -433,11 +438,11 @@ int main(int argc, char **argv)
         av_sign += meanSign;
     }
 
-    elDens /= 4;
-    elDoubleOc /=4;
-    kineticEnergy /= 4;
-    spin_corr /= 4;
-    av_sign /= 4;
+    elDens /= NTHREADS;
+    elDoubleOc /= NTHREADS;
+    kineticEnergy /= NTHREADS;
+    spin_corr /= NTHREADS;
+    av_sign /= NTHREADS;
 
     write(L, totalMCSweeps, W, A, av_sign, av_weights,
       elDens, U, elDoubleOc, kineticEnergy, spin_corr);

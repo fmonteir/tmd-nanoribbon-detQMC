@@ -30,6 +30,8 @@
 
 #	DEFAULT PARAMETERS
 
+# Number of threads
+nthreads=4
 # Length of the ribbon
 nx=10
 # Width of the ribbon
@@ -50,7 +52,7 @@ source=simulation_eq_time
 # Set parameters of the simulation here.
 CXX = g++-8 -DNX=$(nx) -DNY=$(ny) -DNORB=$(norb) -DDT_INV=$(dt_inv)\
  -DBETA=$(beta) -DGREEN_AFRESH_FREQ=$(green_afresh_freq) -DVERBOSE=$(verbose)\
- -DEIGEN_DONT_PARALLELIZE -fopenmp
+ -DEIGEN_DONT_PARALLELIZE -DNTHREADS=$(nthreads) -fopenmp
 
 include_dir=./includes
 
