@@ -31,9 +31,9 @@ void write(int L, int sweep, int W, int A, double meanSign, double * weights,
     }
 
     //  STORE MEASUREMENTS
-    std::ofstream file_log_weights("tmp/Log-weights.csv");
-    std::ofstream file_meas("tmp/MeasurementsScalars.csv");
-    std::ofstream file_spin_corr("tmp/EqTimeSzCorrelations.csv");
+    std::ofstream file_log_weights("temp-data/Log-weights.csv");
+    std::ofstream file_meas("temp-data/MeasurementsScalars.csv");
+    std::ofstream file_spin_corr("temp-data/EqTimeSzCorrelations.csv");
     if ( file_log_weights.is_open() and file_meas.is_open()
      and file_spin_corr.is_open() )
     {

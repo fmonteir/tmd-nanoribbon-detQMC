@@ -123,4 +123,4 @@ src/$(source).o: src/$(source).cpp $(include_dir)/model.hpp $(include_dir)/aux.h
 
 clean:
 	rm -f simulation src/*.o
-	rm -f ./tmp/*
+	rm -f ./temp-data/*
