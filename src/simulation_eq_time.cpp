@@ -430,12 +430,18 @@ int main(int argc, char **argv)
                 }
             }
         }   //  END OF MC LOOP.
-        delete Gup; delete Gdown; delete h; delete Bup; delete Bdown;
+
+        //  Normalize to mean sign
+        nEl /= meanSign; nUp_nDw /= meanSign; SiSjZ /= meanSign;
+        Hkin /= meanSign;
+
         elDens += nEl;
         elDoubleOc += nUp_nDw;
         kineticEnergy += Hkin;
         spin_corr += SiSjZ;
-        av_sign += meanSign;
+        av_sign += abs(meanSign);
+
+        delete Gup; delete Gdown; delete h; delete Bup; delete Bdown;
     }
 
     elDens /= NTHREADS;

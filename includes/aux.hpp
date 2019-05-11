@@ -11,9 +11,6 @@
 void write(int L, int sweep, int W, int A, double meanSign, double * weights,
   double nEl, double U, double nUp_nDw, double Hkin, Eigen::MatrixXd SiSjZ)
 {
-    //  Normalize to mean sign
-    nEl /= meanSign; nUp_nDw /= meanSign; SiSjZ /= meanSign;
-    Hkin /= meanSign;
 
     int precision = 10;
     Eigen::IOFormat CleanFmt(precision, 0, ", ", "\n", "", "");
