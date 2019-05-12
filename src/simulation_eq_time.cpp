@@ -444,11 +444,11 @@ int main(int argc, char **argv)
         delete Gup; delete Gdown; delete h; delete Bup; delete Bdown;
     }
 
-    elDens /= NTHREADS;
-    elDoubleOc /= NTHREADS;
-    kineticEnergy /= NTHREADS;
-    spin_corr /= NTHREADS;
-    av_sign /= NTHREADS;
+    elDens /= NTH;
+    elDoubleOc /= NTH;
+    kineticEnergy /= NTH;
+    spin_corr /= NTH;
+    av_sign /= NTH;
 
     write(L, totalMCSweeps, W, A, av_sign, av_weights,
       elDens, U, elDoubleOc, kineticEnergy, spin_corr);
