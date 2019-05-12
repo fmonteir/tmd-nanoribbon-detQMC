@@ -14,8 +14,8 @@
 //
 
 //  Number of threads
-#ifndef NTHREADS
-#define NTHREADS 4
+#ifndef NTH
+#define NTH 4
 #endif
 
 //  Total number of "sites" (actual spatial sites plus orbitals)
@@ -100,7 +100,7 @@ int main(int argc, char **argv)
     double * av_weights = new double[W * L];
     double av_sign = 0;
 
-    #pragma omp parallel num_threads(NTHREADS)
+    #pragma omp parallel num_threads(NTH)
     {
         //  RANDOM NUMBER GENERATION AND MONTE CARLO-RELATED VARIABLES.
         std::mt19937 gen;  //  mt19937 algorithm to generate random numbers
