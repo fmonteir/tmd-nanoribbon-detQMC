@@ -123,4 +123,5 @@ src/$(source).o: src/$(source).cpp $(include_dir)/model.hpp $(include_dir)/aux.h
 
 clean:
 	rm -f simulation src/*.o
-	rm -f ./temp-data/*
+	rm -f temp-data/Log-weights.csv temp-data/MeasurementsScalars.csv\
+	temp-data/EqTimeSzCorrelations.csv
