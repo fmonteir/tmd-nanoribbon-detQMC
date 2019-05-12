@@ -439,7 +439,7 @@ int main(int argc, char **argv)
         elDoubleOc += nUp_nDw;
         kineticEnergy += Hkin;
         spin_corr += SiSjZ;
-        av_sign += abs(meanSign);
+        av_sign += fabs(meanSign);
 
         delete Gup; delete Gdown; delete h; delete Bup; delete Bdown;
     }
