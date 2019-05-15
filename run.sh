@@ -25,10 +25,10 @@ cd BETA${BETA}-U$U-MU${MU}
 cd ../../../..
 make clean
 
-make nx=$NX ny=${NY} beta=${BETA} dt_inv=8 source=$src_file
+make nx=$NX ny=${NY} beta=${BETA} dt_inv=8 source=$src_file nthreads=$NTH
 
 time ./simulation ${TMD} $U ${MU} 1024 256 2
 
-cp -r tmp/* examples/data/${NX}x${NY}/BETA${BETA}-U$U-MU${MU}
+cp -r temp-data/* examples/data/${NX}x${NY}/BETA${BETA}-U$U-MU${MU}
 
 make clean

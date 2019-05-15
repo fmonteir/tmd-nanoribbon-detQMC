@@ -62,6 +62,7 @@ class Geometry
 public:
     void setParams(int tmd);
     void HoppingMatrix();
+    void HoppingMatrixMagnetic();
     void computeExponential(double dt);
     Eigen::MatrixXd BpreFactor(double dt, double mu);
     double get_t0();
@@ -108,6 +109,102 @@ void Geometry<N>::setParams(int tmd)
 
 template<int N>
 void Geometry<N>::HoppingMatrix()
+{
+    t0 = -1;
+
+    node n(NORB);
+    // Add hoppings
+    n.add_hopping(0, 0, 0, 0, e0);
+    n.add_hopping(1, 1, 0, 0, e1);
+    n.add_hopping(2, 2, 0, 0, e1);
+    // R1
+    n.add_hopping(0, 0, 1, 0, t0);
+    n.add_hopping(1, 1, 1, 0, t11);
+    n.add_hopping(2, 2, 1, 0, t22);
+    n.add_hopping(0, 1, 1, 0, t1);
+    n.add_hopping(0, 2, 1, 0, t2);
+    n.add_hopping(1, 2, 1, 0, t12);
+    n.add_hopping(1, 0, 1, 0, -t1);
+    n.add_hopping(2, 0, 1, 0, t2);
+    n.add_hopping(2, 1, 1, 0, -t12);
+    // R4
+    n.add_hopping(0, 0, -1, 0, t0);
+    n.add_hopping(1, 1, -1, 0, t11);
+    n.add_hopping(2, 2, -1, 0, t22);
+    n.add_hopping(0, 1, -1, 0, -t1);
+    n.add_hopping(0, 2, -1, 0, t2);
+    n.add_hopping(1, 2, -1, 0, -t12);
+    n.add_hopping(1, 0, -1, 0, t1);
+    n.add_hopping(2, 0, -1, 0, t2);
+    n.add_hopping(2, 1, -1, 0, t12);
+    // R2
+    n.add_hopping(0, 0, 1, -1, t0);
+    n.add_hopping(1, 1, 1, -1, (t11 + 3 * t22)/4);
+    n.add_hopping(2, 2, 1, -1, ( 3 * t11 + t22 ) / 4);
+    n.add_hopping(0, 1, 1, -1, t1/2 - sqrt(3)*t2/2);
+    n.add_hopping(0, 2, 1, -1, -sqrt(3)*t1/2 - t2/2);
+    n.add_hopping(1, 2, 1, -1, sqrt(3)*(t22-t11)/4-t12);
+    n.add_hopping(1, 0, 1, -1, -t1/2-sqrt(3)*t2/2);
+    n.add_hopping(2, 0, 1, -1, sqrt(3)*t1/2-t2/2);
+    n.add_hopping(2, 1, 1, -1, sqrt(3)*(t22-t11)/4+t12);
+    // R5
+    n.add_hopping(0, 0, -1, 1, t0);
+    n.add_hopping(1, 1, -1, 1, (t11 + 3 * t22 ) / 4);
+    n.add_hopping(2, 2, -1, 1, (3 * t11 + t22 ) / 4);
+    n.add_hopping(0, 1, -1, 1, -t1/2-sqrt(3)*t2/2);
+    n.add_hopping(0, 2, -1, 1, sqrt(3)*t1/2-t2/2);
+    n.add_hopping(1, 2, -1, 1, sqrt(3)*(t22-t11)/4+t12);
+    n.add_hopping(1, 0, -1, 1, t1/2-sqrt(3)*t2/2);
+    n.add_hopping(2, 0, -1, 1, -sqrt(3)*t1/2-t2/2);
+    n.add_hopping(2, 1, -1, 1, sqrt(3)*(t22-t11)/4-t12);
+    // R3
+    n.add_hopping(0, 0, 0, -1, t0);
+    n.add_hopping(1, 1, 0, -1, ( t11 + 3 * t22 ) / 4);
+    n.add_hopping(2, 2, 0, -1, ( 3 * t11 + t22 ) / 4);
+    n.add_hopping(0, 1, 0, -1, -t1/2+sqrt(3)*t2/2);
+    n.add_hopping(0, 2, 0, -1, -sqrt(3)*t1/2-t2/2);
+    n.add_hopping(1, 2, 0, -1, -sqrt(3)*(t22-t11)/4+t12);
+    n.add_hopping(1, 0, 0, -1, t1/2+sqrt(3)*t2/2);
+    n.add_hopping(2, 0, 0, -1, sqrt(3)*t1/2-t2/2);
+    n.add_hopping(2, 1, 0, -1, -sqrt(3)*(t22-t11)/4-t12);
+    // R6
+    n.add_hopping(0, 0, 0, 1, t0);
+    n.add_hopping(1, 1, 0, 1, ( t11 + 3 * t22 ) / 4);
+    n.add_hopping(2, 2, 0, 1, ( 3 * t11 + t22 ) / 4);
+    n.add_hopping(0, 1, 0, 1, t1/2+sqrt(3)*t2/2);
+    n.add_hopping(0, 2, 0, 1, sqrt(3)*t1/2-t2/2);
+    n.add_hopping(1, 2, 0, 1, -sqrt(3)*(t22-t11)/4-t12);
+    n.add_hopping(1, 0, 0, 1, -t1/2+sqrt(3)*t2/2);
+    n.add_hopping(2, 0, 0, 1, -sqrt(3)*t1/2-t2/2);
+    n.add_hopping(2, 1, 0, 1, -sqrt(3)*(t22-t11)/4+t12);
+
+    for (int x = 0; x < NX; x++ )
+        for (int y = 0; y < NY; y++ )
+          for (int orb = 0; orb < NORB; orb++ )
+          {
+              unsigned start_idx = orb + NORB * ( NX * y + x );
+              for (unsigned neighbor_idx = 0;
+                  neighbor_idx < n.NHoppings[orb]; neighbor_idx++)
+              {
+                  unsigned end_x =
+                    ( x + n.x_idxs[orb].at(neighbor_idx) + NX ) % NX;
+                  int end_y =
+                    y + n.y_idxs[orb].at(neighbor_idx);
+                  unsigned end_idx =
+                    n.end_orbs[orb].at(neighbor_idx) + NORB
+                    * ( NX * end_y + end_x );
+                  if ( end_y >= 0 && end_y < NY )
+                  {
+                      B(start_idx, end_idx)
+                         = -n.hoppings[orb].at(neighbor_idx);
+                  }
+              }
+          }
+    Hoppings = -B;
+}
+
+template<int N>
+void Geometry<N>::HoppingMatrixMagnetic()
 {
     t0 = -1;
 

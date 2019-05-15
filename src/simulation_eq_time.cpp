@@ -6,7 +6,7 @@
 //
 //  This program simulates the Hubbard model for a tmd nanoribbon
 //  using auxiliary field (or determinant) Quantum Monte Carlo: in particular,
-//  the BSS algorithm. This is version is optimized to compute observables that
+//  the BSS algorithm. This version is optimized to compute observables that
 //  require measuring equal-time Green's functions
 //  The used notation is based on the lecture notes "Numerical Methods for
 //  Quantum Monte Carlo Simulations of the Hubbard Model by Zhaojun Bai,
@@ -232,7 +232,7 @@ int main(int argc, char **argv)
                 {
                     //  STORE WEIGHT OF ACCEPTED CONFIGURATIONS
                     // weights[sweep * L + l] = LOGweight;
-                    av_weights[sweep * L + l] += LOGweight / 4;
+                    av_weights[sweep * L + l] += LOGweight / NTH;
                 }
 
                 //  STORE ELECTRON DENSITY, DOUBLE OCCUPANCY
