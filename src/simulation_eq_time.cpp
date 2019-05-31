@@ -58,6 +58,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <math.h>
 #include <random>
 #include <fstream>
 #include <iomanip>
@@ -132,8 +133,8 @@ int main(int argc, char **argv)
           new OneParticlePropagators< NSITES, L >;
         OneParticlePropagators< NSITES, L > * Bdown=
           new OneParticlePropagators< NSITES, L >;
-        Bup->fillMatrices( true, nu, h->matrix(), K.BpreFactor(dt, mu) );
-        Bdown->fillMatrices( false, nu, h->matrix(), K.BpreFactor(dt, mu) );
+        Bup->fillMatrices( true, nu, h->matrix(), K.BpreFactorUp(dt, mu) );
+        Bdown->fillMatrices( false, nu, h->matrix(), K.BpreFactorDw(dt, mu) );
 
         //  GENERATE THE SPIN-UP AND SPIN-DOWN GREEN FUNCTIONS.
         Green< NSITES, L, Lbda> * Gup = new Green< NSITES, L, Lbda>;
@@ -432,23 +433,24 @@ int main(int argc, char **argv)
         }   //  END OF MC LOOP.
 
         //  Normalize to mean sign
-        nEl /= meanSign; nUp_nDw /= meanSign; SiSjZ /= meanSign;
-        Hkin /= meanSign;
+        // nEl /= meanSign; nUp_nDw /= meanSign; SiSjZ /= meanSign;
+        // Hkin /= meanSign;
 
-        elDens += nEl;
-        elDoubleOc += nUp_nDw;
-        kineticEnergy += Hkin;
-        spin_corr += SiSjZ;
+        elDens += nEl * copysign(1.0, meanSign);
+        elDoubleOc += nUp_nDw * copysign(1.0, meanSign);
+        kineticEnergy += Hkin * copysign(1.0, meanSign);
+        spin_corr += SiSjZ * copysign(1.0, meanSign);
         av_sign += fabs(meanSign);
 
         delete Gup; delete Gdown; delete h; delete Bup; delete Bdown;
     }
 
-    elDens /= NTH;
-    elDoubleOc /= NTH;
-    kineticEnergy /= NTH;
-    spin_corr /= NTH;
     av_sign /= NTH;
+    elDens /= (NTH * av_sign);
+    elDoubleOc /= (NTH * av_sign);
+    kineticEnergy /= (NTH * av_sign);
+    spin_corr /= (NTH * av_sign);
+
 
     write(L, totalMCSweeps, W, A, av_sign, av_weights,
       elDens, U, elDoubleOc, kineticEnergy, spin_corr);

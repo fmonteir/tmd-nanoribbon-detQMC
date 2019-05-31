@@ -54,7 +54,8 @@ struct node {
 template<int N>
 class Geometry
 {
-    Eigen::MatrixXd B;
+    Eigen::MatrixXd Bup;
+    Eigen::MatrixXd Bdw;
     Eigen::MatrixXd Hoppings;
     double e0; double e1; double t0;
     double abs_t0; double t1; double t2;
@@ -62,20 +63,22 @@ class Geometry
 public:
     void setParams(int tmd);
     void HoppingMatrix();
-    void HoppingMatrixMagnetic();
+    void HoppingMatrixMF(double U_MF, Eigen::VectorXd nUp, Eigen::VectorXd nDw);
     void computeExponential(double dt);
-    Eigen::MatrixXd BpreFactor(double dt, double mu);
+    Eigen::MatrixXd BpreFactorUp(double dt, double mu);
+    Eigen::MatrixXd BpreFactorDw(double dt, double mu);
     double get_t0();
     double get(int x, int y);
     Eigen::MatrixXd matrix();
-    Geometry() : B(N, N) {
+    Geometry() : Bup(N, N), Bdw(N, N) {
     };
 };
 
 template<int N>
 void Geometry<N>::computeExponential(double dt)
 {
-    B = (dt * B).exp();
+    Bup = (dt * Bup).exp();
+    Bdw = (dt * Bdw).exp();
 }
 
 template<int N>
@@ -127,16 +130,16 @@ void Geometry<N>::HoppingMatrix()
     n.add_hopping(1, 0, 1, 0, -t1);
     n.add_hopping(2, 0, 1, 0, t2);
     n.add_hopping(2, 1, 1, 0, -t12);
-    // R4
-    n.add_hopping(0, 0, -1, 0, t0);
-    n.add_hopping(1, 1, -1, 0, t11);
-    n.add_hopping(2, 2, -1, 0, t22);
-    n.add_hopping(0, 1, -1, 0, -t1);
-    n.add_hopping(0, 2, -1, 0, t2);
-    n.add_hopping(1, 2, -1, 0, -t12);
-    n.add_hopping(1, 0, -1, 0, t1);
-    n.add_hopping(2, 0, -1, 0, t2);
-    n.add_hopping(2, 1, -1, 0, t12);
+    // // R4
+    // n.add_hopping(0, 0, -1, 0, t0);
+    // n.add_hopping(1, 1, -1, 0, t11);
+    // n.add_hopping(2, 2, -1, 0, t22);
+    // n.add_hopping(0, 1, -1, 0, -t1);
+    // n.add_hopping(0, 2, -1, 0, t2);
+    // n.add_hopping(1, 2, -1, 0, -t12);
+    // n.add_hopping(1, 0, -1, 0, t1);
+    // n.add_hopping(2, 0, -1, 0, t2);
+    // n.add_hopping(2, 1, -1, 0, t12);
     // R2
     n.add_hopping(0, 0, 1, -1, t0);
     n.add_hopping(1, 1, 1, -1, (t11 + 3 * t22)/4);
@@ -147,16 +150,16 @@ void Geometry<N>::HoppingMatrix()
     n.add_hopping(1, 0, 1, -1, -t1/2-sqrt(3)*t2/2);
     n.add_hopping(2, 0, 1, -1, sqrt(3)*t1/2-t2/2);
     n.add_hopping(2, 1, 1, -1, sqrt(3)*(t22-t11)/4+t12);
-    // R5
-    n.add_hopping(0, 0, -1, 1, t0);
-    n.add_hopping(1, 1, -1, 1, (t11 + 3 * t22 ) / 4);
-    n.add_hopping(2, 2, -1, 1, (3 * t11 + t22 ) / 4);
-    n.add_hopping(0, 1, -1, 1, -t1/2-sqrt(3)*t2/2);
-    n.add_hopping(0, 2, -1, 1, sqrt(3)*t1/2-t2/2);
-    n.add_hopping(1, 2, -1, 1, sqrt(3)*(t22-t11)/4+t12);
-    n.add_hopping(1, 0, -1, 1, t1/2-sqrt(3)*t2/2);
-    n.add_hopping(2, 0, -1, 1, -sqrt(3)*t1/2-t2/2);
-    n.add_hopping(2, 1, -1, 1, sqrt(3)*(t22-t11)/4-t12);
+    // // R5
+    // n.add_hopping(0, 0, -1, 1, t0);
+    // n.add_hopping(1, 1, -1, 1, (t11 + 3 * t22 ) / 4);
+    // n.add_hopping(2, 2, -1, 1, (3 * t11 + t22 ) / 4);
+    // n.add_hopping(0, 1, -1, 1, -t1/2-sqrt(3)*t2/2);
+    // n.add_hopping(0, 2, -1, 1, sqrt(3)*t1/2-t2/2);
+    // n.add_hopping(1, 2, -1, 1, sqrt(3)*(t22-t11)/4+t12);
+    // n.add_hopping(1, 0, -1, 1, t1/2-sqrt(3)*t2/2);
+    // n.add_hopping(2, 0, -1, 1, -sqrt(3)*t1/2-t2/2);
+    // n.add_hopping(2, 1, -1, 1, sqrt(3)*(t22-t11)/4-t12);
     // R3
     n.add_hopping(0, 0, 0, -1, t0);
     n.add_hopping(1, 1, 0, -1, ( t11 + 3 * t22 ) / 4);
@@ -167,16 +170,19 @@ void Geometry<N>::HoppingMatrix()
     n.add_hopping(1, 0, 0, -1, t1/2+sqrt(3)*t2/2);
     n.add_hopping(2, 0, 0, -1, sqrt(3)*t1/2-t2/2);
     n.add_hopping(2, 1, 0, -1, -sqrt(3)*(t22-t11)/4-t12);
-    // R6
-    n.add_hopping(0, 0, 0, 1, t0);
-    n.add_hopping(1, 1, 0, 1, ( t11 + 3 * t22 ) / 4);
-    n.add_hopping(2, 2, 0, 1, ( 3 * t11 + t22 ) / 4);
-    n.add_hopping(0, 1, 0, 1, t1/2+sqrt(3)*t2/2);
-    n.add_hopping(0, 2, 0, 1, sqrt(3)*t1/2-t2/2);
-    n.add_hopping(1, 2, 0, 1, -sqrt(3)*(t22-t11)/4-t12);
-    n.add_hopping(1, 0, 0, 1, -t1/2+sqrt(3)*t2/2);
-    n.add_hopping(2, 0, 0, 1, -sqrt(3)*t1/2-t2/2);
-    n.add_hopping(2, 1, 0, 1, -sqrt(3)*(t22-t11)/4+t12);
+    // // R6
+    // n.add_hopping(0, 0, 0, 1, t0);
+    // n.add_hopping(1, 1, 0, 1, ( t11 + 3 * t22 ) / 4);
+    // n.add_hopping(2, 2, 0, 1, ( 3 * t11 + t22 ) / 4);
+    // n.add_hopping(0, 1, 0, 1, t1/2+sqrt(3)*t2/2);
+    // n.add_hopping(0, 2, 0, 1, sqrt(3)*t1/2-t2/2);
+    // n.add_hopping(1, 2, 0, 1, -sqrt(3)*(t22-t11)/4-t12);
+    // n.add_hopping(1, 0, 0, 1, -t1/2+sqrt(3)*t2/2);
+    // n.add_hopping(2, 0, 0, 1, -sqrt(3)*t1/2-t2/2);
+    // n.add_hopping(2, 1, 0, 1, -sqrt(3)*(t22-t11)/4+t12);
+
+    Bup = Eigen::MatrixXd::Zero(NX * NY * NORB, NX * NY * NORB);
+    Bdw = Eigen::MatrixXd::Zero(NX * NY * NORB, NX * NY * NORB);
 
     for (int x = 0; x < NX; x++ )
         for (int y = 0; y < NY; y++ )
@@ -195,16 +201,22 @@ void Geometry<N>::HoppingMatrix()
                     * ( NX * end_y + end_x );
                   if ( end_y >= 0 && end_y < NY )
                   {
-                      B(start_idx, end_idx)
+                      Bup(start_idx, end_idx)
+                         = -n.hoppings[orb].at(neighbor_idx);
+                      Bup(end_idx, start_idx)
+                         = -n.hoppings[orb].at(neighbor_idx);
+                      Bdw(start_idx, end_idx)
+                         = -n.hoppings[orb].at(neighbor_idx);
+                      Bdw(end_idx, start_idx)
                          = -n.hoppings[orb].at(neighbor_idx);
                   }
               }
           }
-    Hoppings = -B;
+    Hoppings = -Bup;
 }
 
 template<int N>
-void Geometry<N>::HoppingMatrixMagnetic()
+void Geometry<N>::HoppingMatrixMF(double U_MF, Eigen::VectorXd nUp, Eigen::VectorXd nDw)
 {
     t0 = -1;
 
@@ -223,16 +235,16 @@ void Geometry<N>::HoppingMatrixMagnetic()
     n.add_hopping(1, 0, 1, 0, -t1);
     n.add_hopping(2, 0, 1, 0, t2);
     n.add_hopping(2, 1, 1, 0, -t12);
-    // R4
-    n.add_hopping(0, 0, -1, 0, t0);
-    n.add_hopping(1, 1, -1, 0, t11);
-    n.add_hopping(2, 2, -1, 0, t22);
-    n.add_hopping(0, 1, -1, 0, -t1);
-    n.add_hopping(0, 2, -1, 0, t2);
-    n.add_hopping(1, 2, -1, 0, -t12);
-    n.add_hopping(1, 0, -1, 0, t1);
-    n.add_hopping(2, 0, -1, 0, t2);
-    n.add_hopping(2, 1, -1, 0, t12);
+    // // R4
+    // n.add_hopping(0, 0, -1, 0, t0);
+    // n.add_hopping(1, 1, -1, 0, t11);
+    // n.add_hopping(2, 2, -1, 0, t22);
+    // n.add_hopping(0, 1, -1, 0, -t1);
+    // n.add_hopping(0, 2, -1, 0, t2);
+    // n.add_hopping(1, 2, -1, 0, -t12);
+    // n.add_hopping(1, 0, -1, 0, t1);
+    // n.add_hopping(2, 0, -1, 0, t2);
+    // n.add_hopping(2, 1, -1, 0, t12);
     // R2
     n.add_hopping(0, 0, 1, -1, t0);
     n.add_hopping(1, 1, 1, -1, (t11 + 3 * t22)/4);
@@ -243,16 +255,16 @@ void Geometry<N>::HoppingMatrixMagnetic()
     n.add_hopping(1, 0, 1, -1, -t1/2-sqrt(3)*t2/2);
     n.add_hopping(2, 0, 1, -1, sqrt(3)*t1/2-t2/2);
     n.add_hopping(2, 1, 1, -1, sqrt(3)*(t22-t11)/4+t12);
-    // R5
-    n.add_hopping(0, 0, -1, 1, t0);
-    n.add_hopping(1, 1, -1, 1, (t11 + 3 * t22 ) / 4);
-    n.add_hopping(2, 2, -1, 1, (3 * t11 + t22 ) / 4);
-    n.add_hopping(0, 1, -1, 1, -t1/2-sqrt(3)*t2/2);
-    n.add_hopping(0, 2, -1, 1, sqrt(3)*t1/2-t2/2);
-    n.add_hopping(1, 2, -1, 1, sqrt(3)*(t22-t11)/4+t12);
-    n.add_hopping(1, 0, -1, 1, t1/2-sqrt(3)*t2/2);
-    n.add_hopping(2, 0, -1, 1, -sqrt(3)*t1/2-t2/2);
-    n.add_hopping(2, 1, -1, 1, sqrt(3)*(t22-t11)/4-t12);
+    // // R5
+    // n.add_hopping(0, 0, -1, 1, t0);
+    // n.add_hopping(1, 1, -1, 1, (t11 + 3 * t22 ) / 4);
+    // n.add_hopping(2, 2, -1, 1, (3 * t11 + t22 ) / 4);
+    // n.add_hopping(0, 1, -1, 1, -t1/2-sqrt(3)*t2/2);
+    // n.add_hopping(0, 2, -1, 1, sqrt(3)*t1/2-t2/2);
+    // n.add_hopping(1, 2, -1, 1, sqrt(3)*(t22-t11)/4+t12);
+    // n.add_hopping(1, 0, -1, 1, t1/2-sqrt(3)*t2/2);
+    // n.add_hopping(2, 0, -1, 1, -sqrt(3)*t1/2-t2/2);
+    // n.add_hopping(2, 1, -1, 1, sqrt(3)*(t22-t11)/4-t12);
     // R3
     n.add_hopping(0, 0, 0, -1, t0);
     n.add_hopping(1, 1, 0, -1, ( t11 + 3 * t22 ) / 4);
@@ -263,16 +275,19 @@ void Geometry<N>::HoppingMatrixMagnetic()
     n.add_hopping(1, 0, 0, -1, t1/2+sqrt(3)*t2/2);
     n.add_hopping(2, 0, 0, -1, sqrt(3)*t1/2-t2/2);
     n.add_hopping(2, 1, 0, -1, -sqrt(3)*(t22-t11)/4-t12);
-    // R6
-    n.add_hopping(0, 0, 0, 1, t0);
-    n.add_hopping(1, 1, 0, 1, ( t11 + 3 * t22 ) / 4);
-    n.add_hopping(2, 2, 0, 1, ( 3 * t11 + t22 ) / 4);
-    n.add_hopping(0, 1, 0, 1, t1/2+sqrt(3)*t2/2);
-    n.add_hopping(0, 2, 0, 1, sqrt(3)*t1/2-t2/2);
-    n.add_hopping(1, 2, 0, 1, -sqrt(3)*(t22-t11)/4-t12);
-    n.add_hopping(1, 0, 0, 1, -t1/2+sqrt(3)*t2/2);
-    n.add_hopping(2, 0, 0, 1, -sqrt(3)*t1/2-t2/2);
-    n.add_hopping(2, 1, 0, 1, -sqrt(3)*(t22-t11)/4+t12);
+    // // R6
+    // n.add_hopping(0, 0, 0, 1, t0);
+    // n.add_hopping(1, 1, 0, 1, ( t11 + 3 * t22 ) / 4);
+    // n.add_hopping(2, 2, 0, 1, ( 3 * t11 + t22 ) / 4);
+    // n.add_hopping(0, 1, 0, 1, t1/2+sqrt(3)*t2/2);
+    // n.add_hopping(0, 2, 0, 1, sqrt(3)*t1/2-t2/2);
+    // n.add_hopping(1, 2, 0, 1, -sqrt(3)*(t22-t11)/4-t12);
+    // n.add_hopping(1, 0, 0, 1, -t1/2+sqrt(3)*t2/2);
+    // n.add_hopping(2, 0, 0, 1, -sqrt(3)*t1/2-t2/2);
+    // n.add_hopping(2, 1, 0, 1, -sqrt(3)*(t22-t11)/4+t12);
+
+    Bup = Eigen::MatrixXd::Zero(NX * NY * NORB, NX * NY * NORB);
+    Bdw = Eigen::MatrixXd::Zero(NX * NY * NORB, NX * NY * NORB);
 
     for (int x = 0; x < NX; x++ )
         for (int y = 0; y < NY; y++ )
@@ -291,19 +306,34 @@ void Geometry<N>::HoppingMatrixMagnetic()
                     * ( NX * end_y + end_x );
                   if ( end_y >= 0 && end_y < NY )
                   {
-                      B(start_idx, end_idx)
+                      Bup(start_idx, end_idx)
+                         = -n.hoppings[orb].at(neighbor_idx);
+                      Bdw(start_idx, end_idx)
+                         = -n.hoppings[orb].at(neighbor_idx);
+                      Bup(end_idx, start_idx)
+                         = -n.hoppings[orb].at(neighbor_idx);
+                      Bdw(end_idx, start_idx)
                          = -n.hoppings[orb].at(neighbor_idx);
                   }
               }
           }
-    Hoppings = -B;
+    Bup -= U_MF * Eigen::MatrixXd(nDw.asDiagonal());
+    Bdw -= U_MF * Eigen::MatrixXd(nUp.asDiagonal());
+    Hoppings = -Bup;
 }
 
 template<int N>
-Eigen::MatrixXd Geometry<N>::BpreFactor(double dt, double mu)
+Eigen::MatrixXd Geometry<N>::BpreFactorUp(double dt, double mu)
 {
     // add magnetic field via spin dependence
-    return exp(dt * mu) * B;
+    return exp(dt * mu) * Bup;
+}
+
+template<int N>
+Eigen::MatrixXd Geometry<N>::BpreFactorDw(double dt, double mu)
+{
+    // add magnetic field via spin dependence
+    return exp(dt * mu) * Bdw;
 }
 
 template<int N>
