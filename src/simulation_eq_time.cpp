@@ -436,20 +436,20 @@ int main(int argc, char **argv)
         // nEl /= meanSign; nUp_nDw /= meanSign; SiSjZ /= meanSign;
         // Hkin /= meanSign;
 
-        elDens += nEl * copysign(1.0, meanSign);
-        elDoubleOc += nUp_nDw * copysign(1.0, meanSign);
-        kineticEnergy += Hkin * copysign(1.0, meanSign);
-        spin_corr += SiSjZ * copysign(1.0, meanSign);
-        av_sign += fabs(meanSign);
+        elDens += nEl;
+        elDoubleOc += nUp_nDw;
+        kineticEnergy += Hkin;
+        spin_corr += SiSjZ;
+        av_sign += meanSign;
 
         delete Gup; delete Gdown; delete h; delete Bup; delete Bdown;
     }
 
     av_sign /= NTH;
-    elDens /= (NTH * av_sign);
-    elDoubleOc /= (NTH * av_sign);
-    kineticEnergy /= (NTH * av_sign);
-    spin_corr /= (NTH * av_sign);
+    elDens /= NTH;
+    elDoubleOc /= NTH;
+    kineticEnergy /= NTH;
+    spin_corr /= NTH;
 
 
     write(L, totalMCSweeps, W, A, av_sign, av_weights,
