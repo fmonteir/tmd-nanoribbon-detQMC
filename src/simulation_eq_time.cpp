@@ -433,13 +433,13 @@ int main(int argc, char **argv)
         }   //  END OF MC LOOP.
 
         //  Normalize to mean sign
-        nEl /= meanSign; nUp_nDw /= meanSign; SiSjZ /= meanSign;
-        Hkin /= meanSign;
+        // nEl /= meanSign; nUp_nDw /= meanSign; SiSjZ /= meanSign;
+        // Hkin /= meanSign;
 
-        elDens += nEl;
-        elDoubleOc += nUp_nDw;
-        kineticEnergy += Hkin;
-        spin_corr += SiSjZ;
+        elDens += nEl * copysign(1.0, meanSign);
+        elDoubleOc += nUp_nDw * copysign(1.0, meanSign);
+        kineticEnergy += Hkin * copysign(1.0, meanSign);
+        spin_corr += SiSjZ * copysign(1.0, meanSign);
         av_sign += std::abs(meanSign);
 
         delete Gup; delete Gdown; delete h; delete Bup; delete Bdown;
