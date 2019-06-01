@@ -433,8 +433,8 @@ int main(int argc, char **argv)
         }   //  END OF MC LOOP.
 
         //  Normalize to mean sign
-        // nEl /= meanSign; nUp_nDw /= meanSign; SiSjZ /= meanSign;
-        // Hkin /= meanSign;
+        nEl /= meanSign; nUp_nDw /= meanSign; SiSjZ /= meanSign;
+        Hkin /= meanSign;
 
         elDens += nEl;
         elDoubleOc += nUp_nDw;

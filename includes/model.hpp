@@ -130,16 +130,6 @@ void Geometry<N>::HoppingMatrix()
     n.add_hopping(1, 0, 1, 0, -t1);
     n.add_hopping(2, 0, 1, 0, t2);
     n.add_hopping(2, 1, 1, 0, -t12);
-    // // R4
-    // n.add_hopping(0, 0, -1, 0, t0);
-    // n.add_hopping(1, 1, -1, 0, t11);
-    // n.add_hopping(2, 2, -1, 0, t22);
-    // n.add_hopping(0, 1, -1, 0, -t1);
-    // n.add_hopping(0, 2, -1, 0, t2);
-    // n.add_hopping(1, 2, -1, 0, -t12);
-    // n.add_hopping(1, 0, -1, 0, t1);
-    // n.add_hopping(2, 0, -1, 0, t2);
-    // n.add_hopping(2, 1, -1, 0, t12);
     // R2
     n.add_hopping(0, 0, 1, -1, t0);
     n.add_hopping(1, 1, 1, -1, (t11 + 3 * t22)/4);
@@ -150,16 +140,6 @@ void Geometry<N>::HoppingMatrix()
     n.add_hopping(1, 0, 1, -1, -t1/2-sqrt(3)*t2/2);
     n.add_hopping(2, 0, 1, -1, sqrt(3)*t1/2-t2/2);
     n.add_hopping(2, 1, 1, -1, sqrt(3)*(t22-t11)/4+t12);
-    // // R5
-    // n.add_hopping(0, 0, -1, 1, t0);
-    // n.add_hopping(1, 1, -1, 1, (t11 + 3 * t22 ) / 4);
-    // n.add_hopping(2, 2, -1, 1, (3 * t11 + t22 ) / 4);
-    // n.add_hopping(0, 1, -1, 1, -t1/2-sqrt(3)*t2/2);
-    // n.add_hopping(0, 2, -1, 1, sqrt(3)*t1/2-t2/2);
-    // n.add_hopping(1, 2, -1, 1, sqrt(3)*(t22-t11)/4+t12);
-    // n.add_hopping(1, 0, -1, 1, t1/2-sqrt(3)*t2/2);
-    // n.add_hopping(2, 0, -1, 1, -sqrt(3)*t1/2-t2/2);
-    // n.add_hopping(2, 1, -1, 1, sqrt(3)*(t22-t11)/4-t12);
     // R3
     n.add_hopping(0, 0, 0, -1, t0);
     n.add_hopping(1, 1, 0, -1, ( t11 + 3 * t22 ) / 4);
@@ -170,16 +150,6 @@ void Geometry<N>::HoppingMatrix()
     n.add_hopping(1, 0, 0, -1, t1/2+sqrt(3)*t2/2);
     n.add_hopping(2, 0, 0, -1, sqrt(3)*t1/2-t2/2);
     n.add_hopping(2, 1, 0, -1, -sqrt(3)*(t22-t11)/4-t12);
-    // // R6
-    // n.add_hopping(0, 0, 0, 1, t0);
-    // n.add_hopping(1, 1, 0, 1, ( t11 + 3 * t22 ) / 4);
-    // n.add_hopping(2, 2, 0, 1, ( 3 * t11 + t22 ) / 4);
-    // n.add_hopping(0, 1, 0, 1, t1/2+sqrt(3)*t2/2);
-    // n.add_hopping(0, 2, 0, 1, sqrt(3)*t1/2-t2/2);
-    // n.add_hopping(1, 2, 0, 1, -sqrt(3)*(t22-t11)/4-t12);
-    // n.add_hopping(1, 0, 0, 1, -t1/2+sqrt(3)*t2/2);
-    // n.add_hopping(2, 0, 0, 1, -sqrt(3)*t1/2-t2/2);
-    // n.add_hopping(2, 1, 0, 1, -sqrt(3)*(t22-t11)/4+t12);
 
     Bup = Eigen::MatrixXd::Zero(NX * NY * NORB, NX * NY * NORB);
     Bdw = Eigen::MatrixXd::Zero(NX * NY * NORB, NX * NY * NORB);
