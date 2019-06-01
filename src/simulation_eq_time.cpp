@@ -440,7 +440,7 @@ int main(int argc, char **argv)
         elDoubleOc += nUp_nDw;
         kineticEnergy += Hkin;
         spin_corr += SiSjZ;
-        av_sign += meanSign;
+        av_sign += std::abs(meanSign);
 
         delete Gup; delete Gdown; delete h; delete Bup; delete Bdown;
     }
